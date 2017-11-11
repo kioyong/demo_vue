@@ -33,22 +33,35 @@ export default{
           // this.isLogin=true
           //加密使用httpBasic验证
           let base64 = require('js-base64').Base64;
-          // let auth = "Basic " + base64.encode("this.account+":"+this.password")
-          let auth =base64.encode("yong")
+          let auth = "Basic " + base64.encode("yong"+":"+"passw0rd")
+          // let auth =base64.encode("yong")
           // let loginParam = {
           // "Authorization": auth
           // }
-          console.log(auth)
+          let formdata = new FormData();
+  	      formdata.append('username',this.account);
+          formdata.append('password',this.password);
+          formdata.append('grant_type','password');
+          // this.$http.post('/someUrl', formData).then((response) => {
+          //               // success callback
+          //           }, (response) => {
+          //               // error callback
+          //           });
         this.$http({
           method:'POST',
-          url:'http://localhost:8081/login',
-          body:{
-            "username":"test",
-            "password":"test"
-          },
-          // headers:{
-            // "Access-Control-Allow-Origin": "*",
-          // }, 
+          url:'http://localhost:8081/oauth/token',
+          // body:{
+          //   // "grant_type":"password",
+          //   "username":"test", 
+          //   "password":"test",
+          //   "grant_type":"password"
+          // },
+          body:formdata,
+          headers:{
+            "Authorization": auth,
+            // "content-type":"form-data"  
+            "Content-Type":"multipart/form-data"
+          }, 
           // emulateJSON:true
           }).then((response) => {
             if(response.data.code == 0){
