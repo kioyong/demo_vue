@@ -1,18 +1,23 @@
 <template>
-  <div class="login" id="login">
-    <div class="log-email">
-        <input type="text" placeholder="Email" 
-          :class="'log-input' + (account==''?' log-input-empty':'')" 
-          v-model="account">
-        <input type="password" placeholder="Password" 
-          :class="'log-input' + (password==''?' log-input-empty':'')" 
-          v-model="password">
-        <a href="javascript:;" class="log-btn" @click="login">Login</a>
-    </div>
-</div>
+<div class="container">
+<link href="http://v3.bootcss.com/examples/signin/signin.css" rel="stylesheet">
+      <form class="form-signin">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputAccount" class="sr-only">账号</label>
+        <input type="text" placeholder="账号" id = "inputAccount" class="form-control" v-model="account">
+        <label for="inputPassword" class="sr-only">密码</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required v-model="password">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" @click="login">Sign in</button>
+      </form>
+
+    </div> <!-- /container -->
 </template>
 <script>
-// import Loading from './Loading.vue'
 import md5 from 'js-md5'
 export default{
     name: 'Login',
@@ -23,52 +28,32 @@ export default{
         password:''
       }
     },
-    // components:{
-    //   Loading
-    // },
     methods:{
       login(){
         if(this.account!='' && this.password!=''){
-          //设置状态为正在登陆
-          // this.isLogin=true
-          //加密使用httpBasic验证
           let base64 = require('js-base64').Base64;
           let auth = "Basic " + base64.encode("yong"+":"+"passw0rd")
-          // let auth =base64.encode("yong")
-          // let loginParam = {
-          // "Authorization": auth
-          // }
           let formdata = new FormData();
-  	      formdata.append('username',this.account);
+          formdata.append('username',this.account);
           formdata.append('password',this.password);
           formdata.append('grant_type','password');
-          // this.$http.post('/someUrl', formData).then((response) => {
-          //               // success callback
-          //           }, (response) => {
-          //               // error callback
-          //           });
         this.$http({
           method:'POST',
-          url:'http://localhost:8081/oauth/token',
-          // body:{
-          //   // "grant_type":"password",
-          //   "username":"test", 
-          //   "password":"test",
-          //   "grant_type":"password"
-          // },
+          url:'http://localhost:8081/api/oauth/token',
           body:formdata,
+          // emulateJSON: true,
           headers:{
             "Authorization": auth,
-            // "content-type":"form-data"  
             "Content-Type":"multipart/form-data"
-          }, 
-          // emulateJSON:true
+          }
           }).then((response) => {
             if(response.data.code == 0){
               console.log("success")
+              this.$router.push('/user_info')
             }
           }, (response) => {
               console.log("login fail")
+              this.$router.push('/user_info')
           });
         }else{
           console.log("account password error")
